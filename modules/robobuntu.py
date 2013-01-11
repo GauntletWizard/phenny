@@ -15,7 +15,7 @@ def robobuntu(phenny, input):
 robobuntu.priority = 'low'
 robobuntu.rule = ".*ubuntu.*"
 
-pokere = re.compile(r'(\w*)\W(ten|10)\W(\w*)', re.IGNORECASE)
+pokere = re.compile(r'(\w+)\W(ten|10)\W(\w+)', re.IGNORECASE)
 def pokemans(phenny, input):
 	# You can't X ten Y!
 	x, ten, y = pokere.search(input).groups()
