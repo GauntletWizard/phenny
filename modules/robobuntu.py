@@ -11,7 +11,6 @@ import re
 def robobuntu(phenny, input):
   #oo-BUN-too
 	phenny.say("oo-BOON-too!")
-	print "called: ", input
 	return
 robobuntu.priority = 'low'
 robobuntu.rule = ".*ubuntu.*"
@@ -19,9 +18,8 @@ robobuntu.rule = ".*ubuntu.*"
 pokere = re.compile(r'(\w*)\W(ten|10)\W(\w*)', re.IGNORECASE)
 def pokemans(phenny, input):
 	# You can't X ten Y!
-	print "pokemans"
 	x, ten, y = pokere.search(input).groups()
-	phenny.say("You can't %s ten %s!" % (x, y))
+	phenny.say("You can't %s ten %ss!" % (x, y))
 	return
 
 pokemans.rule = r'.*(\w*)\W(ten|10)\W(\w*).*'
