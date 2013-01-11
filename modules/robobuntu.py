@@ -19,10 +19,15 @@ robobuntu.ignorecase = True
 def pokemans(phenny, input):
 	# You can't X ten Y!
 	x, ten, y = pokere.search(input).groups()
-	phenny.say("You can't %s ten %ss!" % (x, y))
+	if y[-1].lower() == 's':
+		y = y[0:-1]
+	tens = ("You can't %s ten %ss!" % (x, y))
+	if input.upper() == input:
+		tens = tens.upper()
+	phenny.say(tens)
 	return
 
-pokemans.rule = r'(\w+)\W(ten|10)\W(\w+)s?'
+pokemans.rule = r'.*?(\w+)\W(ten|10)\W(\w+)'
 pokere = re.compile(pokemans.rule, re.IGNORECASE)
 pokemans.priority = 'low'
 pokemans.ignorecase = True
@@ -30,7 +35,7 @@ pokemans.ignorecase = True
 def geodudes(phenny, input):
 	phenny.say("6 geodudes, can't lose!")
 	return
-geodudes.rule = r'(6|six) geodudes'
+geodudes.rule = r'.*(6|six) geodudes.*'
 pokemans.ignorecase = True
 
 if __name__ == '__main__': 
