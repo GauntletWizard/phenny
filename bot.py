@@ -59,7 +59,7 @@ class Phenny(irc.Bot):
          #    del sys.modules[name]
          try: module = imp.load_source(name, filename)
          except Exception, e: 
-            print >> sys.stderr, "Error loading %s: %s (in bot.py)" % (name, e)
+            print >> sys.stderr, "Error loading %s from %s: %s (in bot.py)" % (name, filename, e)
          else: 
             if hasattr(module, 'setup'): 
                module.setup(self)
@@ -149,6 +149,10 @@ class Phenny(irc.Bot):
                pattern = template % (self.config.prefix, command)
                regexp = re.compile(pattern)
                bind(self, func.priority, regexp, func)
+
+         if hasattr(func, 'r_commands'): 
+            for regexp in func.r_commands: 
+							 bind(self, func.priority, regexp, func)
 
    def wrapped(self, origin, text, match): 
       class PhennyWrapper(object): 
