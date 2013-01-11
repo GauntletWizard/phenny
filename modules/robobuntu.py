@@ -14,6 +14,7 @@ def robobuntu(phenny, input):
 	return
 robobuntu.priority = 'low'
 robobuntu.rule = ".*ubuntu.*"
+robobuntu.ignorecase = True
 
 def pokemans(phenny, input):
 	# You can't X ten Y!
@@ -21,14 +22,16 @@ def pokemans(phenny, input):
 	phenny.say("You can't %s ten %ss!" % (x, y))
 	return
 
-pokemans.rule = r'(\w+)\W(ten|10)\W(\w+)'
+pokemans.rule = r'(\w+)\W(ten|10)\W(\w+)s?'
 pokere = re.compile(pokemans.rule, re.IGNORECASE)
 pokemans.priority = 'low'
+pokemans.ignorecase = True
 
 def geodudes(phenny, input):
 	phenny.say("6 geodudes, can't lose!")
 	return
-geodudes.rule = r'(6|six) geodues'
+geodudes.rule = r'(6|six) geodudes'
+pokemans.ignorecase = True
 
 if __name__ == '__main__': 
 	print __doc__.strip()

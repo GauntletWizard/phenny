@@ -101,6 +101,11 @@ class Phenny(irc.Bot):
 
       for name, func in self.variables.iteritems(): 
          # print name, func
+         ignorecase = False
+				 
+         if hasattr(func, 'ignorecase'):
+            ignorecase = func.ignorecase and re.IGNORECASE
+
          if not hasattr(func, 'priority'): 
             func.priority = 'medium'
 
@@ -114,7 +119,7 @@ class Phenny(irc.Bot):
          if hasattr(func, 'rule'): 
             if isinstance(func.rule, str): 
                pattern = sub(func.rule)
-               regexp = re.compile(pattern)
+               regexp = re.compile(pattern, ignorecase)
                bind(self, func.priority, regexp, func)
 
             if isinstance(func.rule, tuple): 
@@ -122,7 +127,7 @@ class Phenny(irc.Bot):
                if len(func.rule) == 2 and isinstance(func.rule[0], str): 
                   prefix, pattern = func.rule
                   prefix = sub(prefix)
-                  regexp = re.compile(prefix + pattern)
+                  regexp = re.compile(prefix + pattern, ignorecase)
                   bind(self, func.priority, regexp, func)
 
                # 2) e.g. (['p', 'q'], '(.*)')
@@ -131,7 +136,7 @@ class Phenny(irc.Bot):
                   commands, pattern = func.rule
                   for command in commands: 
                      command = r'(%s)\b(?: +(?:%s))?' % (command, pattern)
-                     regexp = re.compile(prefix + command)
+                     regexp = re.compile(prefix + command, ignorecase)
                      bind(self, func.priority, regexp, func)
 
                # 3) e.g. ('$nick', ['p', 'q'], '(.*)')
@@ -140,14 +145,14 @@ class Phenny(irc.Bot):
                   prefix = sub(prefix)
                   for command in commands: 
                      command = r'(%s) +' % command
-                     regexp = re.compile(prefix + command + pattern)
+                     regexp = re.compile(prefix + command + pattern, ignorecase)
                      bind(self, func.priority, regexp, func)
 
          if hasattr(func, 'commands'): 
             for command in func.commands: 
                template = r'^%s(%s)(?: +(.*))?$'
                pattern = template % (self.config.prefix, command)
-               regexp = re.compile(pattern)
+               regexp = re.compile(pattern, ignorecase)
                bind(self, func.priority, regexp, func)
 
    def wrapped(self, origin, text, match): 
