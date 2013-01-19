@@ -16,6 +16,19 @@ robobuntu.priority = 'low'
 robobuntu.rule = ".*ubuntu.*"
 robobuntu.ignorecase = True
 
+def oop(phenny, input):
+	# OOPerating system
+	phenny.say("that's my favorite OOPerating system")
+oop.priority = 'low'
+oop.rule = '.*oo-BOON-too.*'
+oop.ignorecase = True
+
+def oop2(phenny, input):
+	phenny.say("Are you guys talking about oo-BOON-too?")
+oop2.priority = low
+oop2.rule = ".*OOPerating system.*"
+oop2.ignorecase = True
+
 def pokemans(phenny, input):
 	# You can't X ten Y!
 	x, ten, y = pokere.search(input).groups()
