@@ -25,7 +25,7 @@ oop.ignorecase = True
 
 def oop2(phenny, input):
 	phenny.say("Are you guys talking about oo-BOON-too?")
-oop2.priority = low
+oop2.priority = 'low'
 oop2.rule = ".*OOPerating system.*"
 oop2.ignorecase = True
 
