@@ -49,7 +49,14 @@ def geodudes(phenny, input):
 	phenny.say("6 geodudes, can't lose!")
 	return
 geodudes.rule = r'.*(6|six) geodudes.*'
-pokemans.ignorecase = True
+geodudes.ignorecase = True
+
+def fucker(phenny, input):
+	print input
+	phenny.say("Censor yourself, Motherfucker!")
+	return
+fucker.rule = r'.*(fuck|shit|cunt).*'
+fucker.ignorecase = True
 
 if __name__ == '__main__': 
 	print __doc__.strip()
