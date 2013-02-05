@@ -9,6 +9,7 @@ http://inamidst.com/phenny/
 
 import sys, re, time, traceback
 import socket, asyncore, asynchat
+import threading
 
 class Origin(object): 
    source = re.compile(r'([^!]*)!?([^@]*)@?(.*)')
@@ -39,7 +40,6 @@ class Bot(asynchat.async_chat):
       self.channels = channels or []
       self.stack = []
 
-      import threading
       self.sending = threading.RLock()
 
    def initiate_send(self):
@@ -171,7 +171,6 @@ class Bot(asynchat.async_chat):
 
    def error(self, origin): 
       try: 
-         import traceback
          trace = traceback.format_exc()
          print trace
          lines = list(reversed(trace.splitlines()))
@@ -191,7 +190,6 @@ class TestBot(Bot):
    def f_ping(self, origin, match, args): 
       delay = m.group(1)
       if delay is not None: 
-         import time
          time.sleep(int(delay))
          self.msg(origin.sender, 'pong (%s)' % delay)
       else: self.msg(origin.sender, 'pong')
