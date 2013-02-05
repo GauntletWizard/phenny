@@ -7,9 +7,14 @@ Licensed under the Eiffel Forum License 2.
 http://inamidst.com/phenny/
 """
 
-import sys, re, time, traceback
-import socket, asyncore, asynchat
+import asynchat
+import asyncore
+import re
+import socket
+import sys
 import threading
+import time
+import traceback
 
 class Origin(object): 
    source = re.compile(r'([^!]*)!?([^@]*)@?(.*)')
