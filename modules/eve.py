@@ -9,15 +9,24 @@ Copyright 2013 Google Inc
 import xml.etree.ElementTree as ET
 import re
 import sqlite3
+import threading
 import urllib2 as urllib
 
 
+def thread():
+  print "Thread: ", threading.current_thread().ident
+
 def minerals(phenny, input):
-  urllib.urlopen("http://api.eve-central.com/api/marketstat?typeid=34")
+  thread()
+  query(min_types)
+  for item in min_types:
+    phenny.say("%s: Mean: %g Median: %g Volume: %g" % (item.name, item.all['avg'], item.all['median'], item.all['volume']))
+
 minerals.commands = ['minerals']
 minerals.priority = 'low'
 
 def prices(phenny, input):
+  thread()
   items = nametotype(input.split()[1])
   if len(items) > 1:
     phenny.say("I'm uncertain what you were looking for; Perhaps one of these?")
@@ -28,14 +37,19 @@ def prices(phenny, input):
     query(items)
     item = items[0]
     print item, item.name
-    phenny.say("%s: Mean: %d Max: %d Volume: %d" % (item.name, item.all['avg'], item.all['median'], item.all['volume']))
+    phenny.say("%s: Mean: %g Median: %g Volume: %g" % (item.name, item.all['avg'], item.all['median'], item.all['volume']))
     
 prices.commands = ['prices']
 prices.priority = 'low'
 
+def route(phenny, input):
+  who, where, to = input.split()
+  foo = urllib.urlopen("http://api.eve-central.com/api/route/from/%s/to/%s" % (where, to))
+
+
 def query(typeid):
   if isinstance(typeid, list):
-    query = '&typeid='.join(map(lambda x: str(x.typeid), typeid))
+    query = '&typeid='.join(map(lambda x: str(x.typeid) , typeid))
   else:
     query = str(typeid.typeid)
     typeid = [typeid]
@@ -43,7 +57,8 @@ def query(typeid):
   root = ET.fromstring(foo.read())
   i = 0
   for item in root.findall('./marketstat/type'):
-    typeid[0].setPrices(item)
+    typeid[i].setPrices(item)
+    i += 1
 
 class WrongTypeException(Exception):
   pass
@@ -84,5 +99,15 @@ def nametotype(name):
     pass
   print "querying on name"
   results = db.execute("select typeName, typeID from invTypes where typeName LIKE ?",
+                  ["" + name + ""])
+  items = [Itemtype(x,y) for (x, y) in results.fetchall()]
+  if items:
+    return items
+  print items
+  results = db.execute("select typeName, typeID from invTypes where typeName LIKE ?",
                   ["%" + name + "%"])
   return [Itemtype(x,y) for (x, y) in results.fetchall()]
+
+min_types = map(nametotype, range(34,41))
+min_types.append(nametotype(29668))
+min_types = map(lambda x: x[0], min_types)
