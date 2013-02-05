@@ -18,16 +18,16 @@ minerals.commands = ['minerals']
 minerals.priority = 'low'
 
 def prices(phenny, input):
-  names = nametotype(input.split()[1])
-  if len(names) > 1:
+  items = nametotype(input.split()[1])
+  if len(items) > 1:
     phenny.say("I'm uncertain what you were looking for; Perhaps one of these?")
-    for (name, typeid) in names:
-      phenny.say("%d - %s" % (typeid, name))
+    for item in items:
+      phenny.say("%d - %s" % (item.typeid, item.name))
     return
   else:
-    phenny.say('%r' % names)
-    items = query(names[0][1])
+    query(items)
     item = items[0]
+    print item, item.name
     phenny.say("%s: Mean: %d Max: %d Volume: %d" % (item.name, item.all['avg'], item.all['median'], item.all['volume']))
     
 prices.commands = ['prices']
@@ -35,22 +35,32 @@ prices.priority = 'low'
 
 def query(typeid):
   if isinstance(typeid, list):
-    query = '&typeid='.join(typeid)
+    query = '&typeid='.join(map(lambda x: str(x.typeid), typeid))
   else:
-    query = str(typeid)
+    query = str(typeid.typeid)
+    typeid = [typeid]
   foo = urllib.urlopen("http://api.eve-central.com/api/marketstat?typeid=%s" % query)
   root = ET.fromstring(foo.read())
-  results = []
+  i = 0
   for item in root.findall('./marketstat/type'):
-    results.append(Itemtype(item))
-  return results
+    typeid[0].setPrices(item)
+
+class WrongTypeException(Exception):
+  pass
 
 class Itemtype(object):
-  def __init__(self, item):
-    self.type = item.get('id')
-    self.name = nametotype(item.get('id'))[0][0]
+  def __init__(self, name, typeid):
+    self.name = name
+    self.typeid = typeid
+
+  def setPrices(self, item):
+		
+    if not self.typeid == int(item.get('id')):
+      raise WrongTypeException("Expected: %s Got: %s" % (item.get('id'), self.typeid))
+      self.name = nametotype(item.get('id'))[0].name
     self.buy = {}
     self.sell = {}
+    
     self.all = {}
     for name, d in [('buy', self.buy), ('sell', self.sell), ('all', self.all)]:
       for val in item.find(name).getchildren():
@@ -69,10 +79,10 @@ def nametotype(name):
     typeid = int(name)
     results = db.execute("select typeName, typeID from invTypes where typeID = ?",
                     [typeid])
-    return results.fetchall()
+    return [Itemtype(x,y) for (x, y) in results.fetchall()]
   except ValueError:
     pass
   print "querying on name"
   results = db.execute("select typeName, typeID from invTypes where typeName LIKE ?",
                   ["%" + name + "%"])
-  return results.fetchall()
+  return [Itemtype(x,y) for (x, y) in results.fetchall()]
