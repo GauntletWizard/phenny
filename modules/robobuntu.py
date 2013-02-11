@@ -58,6 +58,12 @@ def fucker(phenny, input):
 fucker.rule = r'.*(fuck|shit|cunt).*'
 fucker.ignorecase = True
 
+def warm(phenny, input):
+  phenny.say("Warm yesterday.")
+  return
+warm.rule = r'warm today\.?'
+warm.ignorecase = True
+
 if __name__ == '__main__': 
 	print __doc__.strip()
 

@@ -29,14 +29,13 @@ def prices(phenny, input):
   thread()
   items = nametotype(input.split()[1])
   if len(items) > 1:
-    phenny.say("I'm uncertain what you were looking for; Perhaps one of these?")
+    phenny.say("I'm uncertain what you were looking for; Perhaps one of these?" + " ".join()
     for item in items:
       phenny.say("%d - %s" % (item.typeid, item.name))
     return
   else:
     query(items)
     item = items[0]
-    print item, item.name
     phenny.say("%s: Mean: %g Median: %g Volume: %g" % (item.name, item.all['avg'], item.all['median'], item.all['volume']))
     
 prices.commands = ['prices']
@@ -97,13 +96,11 @@ def nametotype(name):
     return [Itemtype(x,y) for (x, y) in results.fetchall()]
   except ValueError:
     pass
-  print "querying on name"
   results = db.execute("select typeName, typeID from invTypes where typeName LIKE ?",
                   ["" + name + ""])
   items = [Itemtype(x,y) for (x, y) in results.fetchall()]
   if items:
     return items
-  print items
   results = db.execute("select typeName, typeID from invTypes where typeName LIKE ?",
                   ["%" + name + "%"])
   return [Itemtype(x,y) for (x, y) in results.fetchall()]
