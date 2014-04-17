@@ -88,7 +88,7 @@ def nametotype(name):
           
   Returns:  An array of typeName, typeID tuples, or None
   """
-  db = sqlite3.connect('/home/ted/dev/eve/eve.sqlite')
+  db = sqlite3.connect('/home/ted/dev/eve/eve.sqlite', check_same_thread=False)
   try:
     typeid = int(name)
     results = db.execute("select typeName, typeID from invTypes where typeID = ?",

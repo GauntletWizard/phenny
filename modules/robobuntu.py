@@ -7,6 +7,8 @@ Copyright 2013 Google Inc
 """
 
 import re
+import urllib2 as urllib
+import xml.etree.ElementTree as ET
 
 def robobuntu(phenny, input):
   #oo-BUN-too
@@ -40,7 +42,7 @@ def pokemans(phenny, input):
 	phenny.say(tens)
 	return
 
-pokemans.rule = r'.*?(\w+)\W(ten|10)\W(\w+)'
+pokemans.rule = r'.*?(\S+)\W(ten|10)\W(\S+)'
 pokere = re.compile(pokemans.rule, re.IGNORECASE)
 pokemans.priority = 'low'
 pokemans.ignorecase = True
@@ -67,4 +69,11 @@ warm.ignorecase = True
 if __name__ == '__main__': 
 	print __doc__.strip()
 
+
+def tonight(phenny, input):
+  foo = urllib.urlopen("http://geeknights-generator.herokuapp.com/").read()
+  root = ET.fromstring(foo[16:])  # Hack off the DOCTYPE.
+  desc = root.findall("./body/div/p")[0].text
+  phenny.say("Tonight on Geeknights" + desc)
+tonight.commands = ['tonight']
 
